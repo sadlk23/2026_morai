@@ -18,7 +18,6 @@
 #include <memory>
 #include <stdexcept>
 #include <cmath>
-#include <optional>
 
 /* ROS1 헤더파일 */
 #include <ros/ros.h>
@@ -46,7 +45,6 @@
 #include "mission_data.hpp"
 #include "cubic_spline.hpp"
 #include "nlohmann/json.hpp"
-#include "mission_2026/mission_2026_ros1_adapter.hpp"
 
 class PlanningNode
 {
@@ -139,6 +137,7 @@ private:
 
     std::unordered_map<int, std::string> mission_dic_ =
         {{0, "safe_stop"},
+         {1, "route_cruise"},
          {14, "static_obstacle_2026"},
          {23, "gps_shadow_tunnel_2026"},
          {24, "dynamic_obstacle_2026"},
@@ -156,11 +155,6 @@ private:
     Lidar *lidar_ptr_;
     Control *control_ptr_;
     MissionData *mission_data_ptr_;
-
-    /* 2026 정적 장애물·GPS 음영 터널 미션 연결부 */
-    std::unique_ptr<mission_2026::Mission2026Ros1Adapter> mission_2026_adapter_;
-    mission_2026::Mission2026Override mission_2026_override_;
-    std::vector<std::optional<mission_2026::Point2D>> mission_2026_mapped_stop_lines_;
 
     /* 타이머 동기화 함수(계속 실행되는 함수) 포인터 */
     ros::Timer timer_;
@@ -182,10 +176,10 @@ public:
         }
 
         std::string map_name;
-        pnh.param<std::string>("map_name", map_name, "highway_test");
+        pnh.param<std::string>("map_name", map_name, "map_2026");
         gp_text_adress_ = package_path + "/map/" + map_name;
 
-        mission_list_ = {60, 100};
+        mission_list_ = {1, 31, 24, 1, 1, 1, 60, 100, 23, 1};
         pnh.getParam("mission_list", mission_list_);
         if (mission_list_.empty())
         {
@@ -206,44 +200,16 @@ public:
             inparam >> json_data;
             inparam.close();
 
-            try
-            {
-                const auto &stop_lines = json_data.at("missions")
-                                                  .at("stop_traffic")
-                                                  .at("stop_line_list");
-                mission_2026_mapped_stop_lines_.reserve(stop_lines.size());
-                for (const auto &line : stop_lines)
-                {
-                    const double x = line.at(0).get<double>();
-                    const double y = line.at(1).get<double>();
-                    if (std::isfinite(x) && std::isfinite(y) && std::hypot(x, y) > 1.0)
-                    {
-                        mission_2026_mapped_stop_lines_.push_back(mission_2026::Point2D{x, y});
-                    }
-                    else
-                    {
-                        mission_2026_mapped_stop_lines_.push_back(std::nullopt);
-                    }
-                }
-            }
-            catch (const std::exception &error)
-            {
-                ROS_WARN("mission_2026 정지선 파라미터를 읽지 못했습니다: %s", error.what());
-                mission_2026_mapped_stop_lines_.clear();
-            }
         }
 
         /* 클래스 인스턴스화 */
-        planning_smtptr_ = std::make_shared<Planning>(gp_text_adress_, mission_list_, mission_dic_, json_data["basic_data"], json_data["missions"]);
+        planning_smtptr_ = std::make_shared<Planning>(nh, pnh, gp_text_adress_, mission_list_, mission_dic_, json_data["basic_data"], json_data["missions"]);
         planning_ptr_ = planning_smtptr_.get();
         local_ptr_ = &(planning_ptr_->getLocal());
         vision_ptr_ = &(planning_ptr_->getVision());
         lidar_ptr_ = &(planning_ptr_->getLidar());
         control_ptr_ = &(planning_ptr_->getControl());
         mission_data_ptr_ = &(planning_ptr_->getMissionData());
-
-        mission_2026_adapter_ =
-            std::make_unique<mission_2026::Mission2026Ros1Adapter>(nh, pnh);
 
         // ROS2→ROS1: removed QoSProfile; ROS1 has no QoS concept
 
@@ -381,32 +347,7 @@ public:
             /* 상태 표시 */
             planning_ptr_->printStatus();
 
-            std::optional<mission_2026::Point2D> mapped_stop_line;
-            const std::size_t mission_index = local_ptr_->getCurMissionIndex();
-            if (mission_index < mission_2026_mapped_stop_lines_.size())
-            {
-                mapped_stop_line = mission_2026_mapped_stop_lines_[mission_index];
-            }
-
-            mission_2026_override_ = mission_2026_adapter_->evaluate(
-                local_ptr_->getCurMissionNumber(),
-                local_ptr_->getRefCurGlobalPath(),
-                mapped_stop_line);
-
-            if (mission_2026_override_.request_absolute_path)
-            {
-                planning_ptr_->curGlobalToLocalCopy();
-            }
-
-            if (!mission_2026_override_.handles_mission)
-            {
-                planning_ptr_->chooseFunc();
-            }
-            else
-            {
-                ROS_INFO_THROTTLE(1.0, "mission_2026: %s",
-                                  mission_2026_override_.diagnostic.c_str());
-            }
+            planning_ptr_->chooseFunc();
 
             /* 시각화 노드 publish 함수 */
             plotPathPubFunc();
@@ -431,35 +372,26 @@ public:
                 ? planning_ptr_->getHighwayCurrentLaneIdx()
                 : -1;
 
-        if (mission_2026_override_.active)
-        {
-            local_pos.data = mission_2026_override_.positions;
-            local_yaw.data = mission_2026_override_.yaws;
-            local_k.data = mission_2026_override_.curvatures;
-            target_velocity.data = mission_2026_override_.target_speed_mps;
-
-            mission_number_pub_.publish(mission_flag);
-            mission100_current_lane_pub_.publish(
-                mission100_current_lane);
-            local_path_pos_pub_.publish(local_pos);
-            local_path_yaw_pub_.publish(local_yaw);
-            local_path_k_pub_.publish(local_k);
-            control_target_velocity_pub_.publish(target_velocity);
-            return;
-        }
-
-        const double *utm_point = local_ptr_->getAddCurCarUTMPos();
-
-        // local_path pub 준비
         const Path &local_path = planning_ptr_->getRefLocalPath();
-        int closest_index = local_path.getClosestIndex(utm_point); // 가장 가까운 위치 찾기
 
         const std::vector<std::vector<double>> &local_pos_arr = local_path.getRefPosArr();
         const std::vector<double> &local_k_arr = local_path.getRefKArr();
         const std::vector<double> &local_yaw_arr = local_path.getRefYawArr();
 
+        if (local_pos_arr.empty())
+        {
+            ROS_ERROR_THROTTLE(1.0, "Planning local path is empty");
+            target_velocity.data = 0.0;
+            mission_number_pub_.publish(mission_flag);
+            mission100_current_lane_pub_.publish(mission100_current_lane);
+            control_target_velocity_pub_.publish(target_velocity);
+            return;
+        }
+
         if (local_pos_arr[0][0] != -82.82)
         {
+            const double *utm_point = local_ptr_->getAddCurCarUTMPos();
+            int closest_index = local_path.getClosestIndex(utm_point);
             int end_index = closest_index + 300;
             if (static_cast<int>(local_pos_arr.size()) <= closest_index + 300)
             {
@@ -483,12 +415,18 @@ public:
         }
         else
         {
-            for (int i = 0; i < local_pos_arr.size(); ++i)
+            for (std::size_t i = 0; i < local_pos_arr.size(); ++i)
             {
                 local_pos.data.push_back(local_pos_arr[i][0]);
                 local_pos.data.push_back(local_pos_arr[i][1]);
-                local_k.data.push_back(local_k_arr[i]);
-                local_yaw.data.push_back(local_yaw_arr[i]);
+            }
+            for (double curvature : local_k_arr)
+            {
+                local_k.data.push_back(curvature);
+            }
+            for (double yaw : local_yaw_arr)
+            {
+                local_yaw.data.push_back(yaw);
             }
         }
 

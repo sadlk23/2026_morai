@@ -3,8 +3,11 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cmath>
+#include <exception>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -18,15 +21,16 @@
 #include "lidar.hpp"
 #include "local.hpp"
 #include "mission_data.hpp"
+#include "mission_2026_ros1_adapter.hpp"
 #include "path.hpp"
 #include "vision.hpp"
 
 /**
  * @brief 2026 미션 1~3 전용 Planning 클래스.
  *
- * 미션 14/23/31은 Mission2026Ros1Adapter가 처리하고,
- * 이 클래스는 미션 24(동적 장애물), 60/100(고속도로) 및
- * 공용 차량 상태·경로·속도 객체만 유지한다.
+ * 모든 미션은 chooseFunc()를 통해 선택되고, 결과는 공용 Path와
+ * Control 객체에 반영된다. Mission 2026 코어도 같은 출력 경로를
+ * 사용하므로 planning_node에는 별도 발행 분기가 없다.
  */
 class Planning
 {
@@ -40,6 +44,10 @@ private:
 
     DynamicObstacleStop dynamic_obstacle_stop_;
     HighwayLaneChange highway_lane_change_;
+    std::unique_ptr<mission_2026::Mission2026Ros1Adapter>
+        mission_2026_adapter_;
+    std::vector<std::optional<mission_2026::Point2D>>
+        mission_2026_mapped_stop_lines_;
 
     int previous_mission_index_ = -1;
     const double default_velocity_;
@@ -49,7 +57,9 @@ private:
     std::vector<std::vector<std::vector<double>>> empty_path_vectors_;
 
 public:
-    Planning(std::string &global_path_address,
+    Planning(ros::NodeHandle &node,
+             ros::NodeHandle &private_node,
+             std::string &global_path_address,
              std::vector<int> &mission_list,
              std::unordered_map<int, std::string> &mission_dictionary,
              nlohmann::json &basic_data,
@@ -73,6 +83,39 @@ public:
               mission_param.at("dynamic_obstacle").value(
                   "target_velocity", default_velocity_))
     {
+        mission_2026_adapter_ =
+            std::make_unique<mission_2026::Mission2026Ros1Adapter>(
+                node, private_node);
+
+        try
+        {
+            const auto &stop_lines = mission_param.at("stop_traffic")
+                                         .at("stop_line_list");
+            mission_2026_mapped_stop_lines_.reserve(stop_lines.size());
+            for (const auto &line : stop_lines)
+            {
+                const double x = line.at(0).get<double>();
+                const double y = line.at(1).get<double>();
+                if (std::isfinite(x) && std::isfinite(y) &&
+                    std::hypot(x, y) > 1.0)
+                {
+                    mission_2026_mapped_stop_lines_.push_back(
+                        mission_2026::Point2D{x, y});
+                }
+                else
+                {
+                    mission_2026_mapped_stop_lines_.push_back(
+                        std::nullopt);
+                }
+            }
+        }
+        catch (const std::exception &error)
+        {
+            ROS_WARN(
+                "mission_2026 stop-line parameters are unavailable: %s",
+                error.what());
+            mission_2026_mapped_stop_lines_.clear();
+        }
     }
 
     Local &getLocal() { return local_; }
@@ -188,6 +231,63 @@ public:
             local_.getCurCarVelocity());
     }
 
+    void applyMission2026Override(
+        const mission_2026::Mission2026Override &output)
+    {
+        if (!output.active)
+        {
+            if (output.request_absolute_path)
+            {
+                curGlobalToLocalCopy();
+            }
+            control_.setTargetVelocity(default_velocity_);
+            return;
+        }
+
+        if (output.positions.size() < 2 ||
+            output.positions.size() % 2 != 0)
+        {
+            ROS_ERROR_THROTTLE(
+                1.0,
+                "mission_2026 returned an invalid position array");
+            control_.setTargetVelocity(0.0);
+            return;
+        }
+
+        std::vector<std::vector<double>> positions;
+        positions.reserve(output.positions.size() / 2);
+        for (std::size_t index = 0;
+             index + 1 < output.positions.size(); index += 2)
+        {
+            positions.push_back(
+                {output.positions[index], output.positions[index + 1]});
+        }
+
+        const bool relative_path =
+            positions.front()[0] == mission_2026::kRelativePathMarker &&
+            positions.front()[1] == mission_2026::kRelativePathMarker;
+        const std::size_t path_point_count =
+            positions.size() - (relative_path ? 1U : 0U);
+        if (output.yaws.size() != path_point_count ||
+            output.curvatures.size() != path_point_count)
+        {
+            ROS_ERROR_THROTTLE(
+                1.0,
+                "mission_2026 path/yaw/curvature sizes do not match");
+            control_.setTargetVelocity(0.0);
+            return;
+        }
+
+        local_path_.setPosArr(positions);
+        local_path_.setYawArr(output.yaws);
+        local_path_.setKArr(output.curvatures);
+        if (!relative_path)
+        {
+            local_path_.updateKDTree();
+        }
+        control_.setTargetVelocity(output.target_speed_mps);
+    }
+
     void chooseFunc()
     {
         const int mission_number = local_.getCurMissionNumber();
@@ -196,8 +296,34 @@ public:
 
         control_.beginControlCycle();
 
+        std::optional<mission_2026::Point2D> mapped_stop_line;
+        const std::size_t mission_index = local_.getCurMissionIndex();
+        if (mission_index < mission_2026_mapped_stop_lines_.size())
+        {
+            mapped_stop_line =
+                mission_2026_mapped_stop_lines_[mission_index];
+        }
+
+        const auto mission_2026_output = mission_2026_adapter_->evaluate(
+            mission_number,
+            local_.getRefCurGlobalPath(),
+            mapped_stop_line);
+        if (mission_2026_output.handles_mission)
+        {
+            applyMission2026Override(mission_2026_output);
+            ROS_INFO_THROTTLE(
+                1.0, "mission_2026: %s",
+                mission_2026_output.diagnostic.c_str());
+            return;
+        }
+
         switch (mission_number)
         {
+        case 1:
+            // Non-mission connector sections in the 2026 competition map.
+            control_.setTargetVelocity(default_velocity_);
+            break;
+
         case 24:
             if (checkMissionChange())
             {
@@ -222,7 +348,7 @@ public:
         case 14:
         case 23:
         case 31:
-            // Mission2026Ros1Adapter가 처리한다.
+            // 어댑터 설정에서 미션 번호가 제외된 경우의 안전 fallback.
             control_.setTargetVelocity(default_velocity_);
             break;
 

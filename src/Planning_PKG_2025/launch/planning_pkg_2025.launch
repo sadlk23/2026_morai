@@ -1,0 +1,11 @@
+<launch>
+  <arg name="map_name" default="highway_test"/>
+  <arg name="mission_list" default="[60, 100]"/>
+  <arg name="mission_2026_config" default="$(find planning_pkg_2025)/config/mission_2026.yaml"/>
+
+  <node pkg="planning_pkg_2025" type="planning_node" name="planning_node" output="screen">
+    <param name="map_name" value="$(arg map_name)"/>
+    <rosparam param="mission_list" subst_value="true">$(arg mission_list)</rosparam>
+    <rosparam command="load" file="$(arg mission_2026_config)"/>
+  </node>
+</launch>

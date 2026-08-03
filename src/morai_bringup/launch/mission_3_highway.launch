@@ -1,0 +1,12 @@
+<launch>
+  <!-- 고속도로 진입(60) 및 4→3→2→1차로 변경(100) 실행 프리셋 -->
+  <arg name="control_profile" default="B_Simul"/>
+  <arg name="use_plotting" default="true"/>
+
+  <include file="$(find morai_bringup)/launch/morai_system.launch">
+    <arg name="map_name" value="highway_test"/>
+    <arg name="mission_list" value="[60, 100]"/>
+    <arg name="control_profile" value="$(arg control_profile)"/>
+    <arg name="use_plotting" value="$(arg use_plotting)"/>
+  </include>
+</launch>

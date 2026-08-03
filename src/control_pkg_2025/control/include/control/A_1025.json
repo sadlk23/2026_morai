@@ -1,0 +1,246 @@
+{
+  "safety_factor": {
+    "curvature_gain": 3.0
+  },
+
+  "normal": {
+    "______lllllllllllllll______": {
+      "gear": 0,
+
+      "PD_gas_gain": [0.35, 0.4],
+      "PD_gas_gain_backup": [0.3, 0.4],
+      "PD_brake_gain": [0.08, 0.07],
+      "PD_brake_gain_backup": [0.08, 0.07],
+
+      "enable_brake_error": 0.2
+    },
+
+    "______---------------______": {
+      "_": "------------------------------stanly-------------",
+      "stanly_gain": [0.2, 0.012, 0.15],
+      "anti_windup_val": 100.0,
+      "stanly_heading_gain": 1.0,
+
+      "stanley_preview_dt": 0.12,
+      "stanley_preview_gain": [0.3, 0.2, 0.2],
+      "stanley_preview_h_e_gain": 1.0,
+      "__": "--------------------------pure_persuit---------------",
+      "PP_LD": [3.5, 11.0],
+      "PP_gain": [0.5, 1.4],
+      "___": "------------------------reverse_pure_persuit------------",
+      "reverse_PP_LD": [5.0, 7.0],
+      "R_PP_gain": [0.2, 2.0],
+      "____": "------------------------combine--------------------",
+      "combine_PP_ratio": 0.3
+    }
+  },
+
+  "missions": {
+    "999": {
+      "_": "협로_1",
+      "______lllllllllllllll______": {
+        "curvature_gain": 3.2,
+        
+        "PD_gas_gain": [0.35, 0.3],
+        "PD_brake_gain": [0.13, 0.1],
+        "PD_brake_gain_backup": [0.04, 0.5],
+        
+        "enable_brake_error": 0.1
+      },
+      "______---------------______": {
+        "PP_LD": [3.0, 5.0],
+        "PP_gain": [0.35, 1.6],
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "998": {
+      "_": "협로_2",
+      "______lllllllllllllll______": {
+        "curvature_gain": 3.0,
+          
+        "PD_gas_gain": [0.12, 0.2],
+        "PD_brake_gain": [0.13, 0.09],
+        "PD_brake_gain_backup": [0.04, 0.5],
+        
+        "enable_brake_error": 0.2
+      },
+
+      "______---------------______": {
+        "_": "------------------------------stanly-------------",
+        "stanly_gain": [0.6, 0.012, 0.1],
+        "anti_windup_val": 100.0,
+        "stanly_heading_gain": 1.6,
+
+        "stanley_preview_dt": 0.13,
+        "stanley_preview_gain": [0.2, 0.25, 0.25],
+        "stanley_preview_h_e_gain": 1.0,
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [3.0, 7.0],
+        "PP_gain": [0.50, 0.9],
+        "bbb_PP_gain": [0.47, 2.0],
+        "____": "------------------------combine--------------------",
+        "combine_PP_ratio": 0.3
+      }
+    },
+
+    "11": {
+      "_": "배달_A",
+      "______lllllllllllllll______": {}
+    },
+
+    "13": {
+      "_": "배달_B",
+      "______lllllllllllllll______": {
+        "PD_gas_gain": [0.4, 0.20],
+        "PD_brake_gain": [0.10, 0.07],
+        "PD_brake_gain_backup": [0.04, 0.5],
+        "enable_brake_error": 0.6
+      },
+
+      "______---------------______": {
+        "_": "------------------------------stanly-------------",
+        "stanly_gain": [0.9, 0.01, 0.10],
+        "anti_windup_val": 100.0,
+        "stanly_heading_gain": 1.0,
+  
+        "stanley_preview_dt": 0.2,
+        "stanley_preview_gain": [0.09, 0.80, 0.10],
+        "stanley_preview_h_e_gain": 1.0,
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [3.0, 7.0],
+        "PP_gain": [0.43, 2.0],
+        "___": "------------------------reverse_pure_persuit------------",
+        "reverse_PP_LD": [5.0, 7.0],
+        "R_PP_gain": [0.2, 2.0],
+        "____": "------------------------combine--------------------",
+        "combine_PP_ratio": 0.75
+      }
+    },
+
+    "14": {
+      "_": "소형",
+      "______lllllllllllllll______": {}
+    },
+
+    "1414": {
+      "_": "소형_백업",
+      "______lllllllllllllll______": {
+        "gear": 0,
+
+        "PD_gas_gain": [0.3, 0.4],
+        "PD_brake_gain": [0.08, 0.07],
+        "PD_brake_gain_backup": [0.04, 0.5],
+
+        "enable_brake_error": 0.2
+      },
+
+      "______---------------______": {
+        "_": "------------------------------stanly-------------",
+        "stanly_gain": [0.4, 0.01, 0.10],
+        "anti_windup_val": 100.0,
+        "stanly_heading_gain": 1.0,
+
+        "stanley_preview_dt": 0.2,
+        "stanley_preview_gain": [0.07, 0.80, 0.10],
+        "stanley_preview_h_e_gain": 1.0,
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [2.3, 9.0],
+        "PP_gain": [0.5, 1.4],
+        "___": "------------------------reverse_pure_persuit------------",
+        "reverse_PP_LD": [5.0, 7.0],
+        "R_PP_gain": [0.2, 2.0],
+        "____": "------------------------combine--------------------",
+        "combine_PP_ratio": 0.4
+      }
+    },
+
+    "1212": {
+      "_": "대형",
+      "______lllllllllllllll______": {}
+    },
+
+    "12": {
+      "_": "대형",
+      "______lllllllllllllll______": {
+        "curvature_gain": 3.2,
+          
+        "PD_gas_gain": [0.35, 0.4],
+        "PD_gas_gain_backup": [0.3, 0.4],
+        "PD_brake_gain": [0.08, 0.07],
+        "PD_brake_gain_backup": [0.08, 0.07],
+
+        "enable_brake_error": 0.2
+      },
+
+      "______---------------______": {
+        "_": "------------------------------stanly-------------",
+        "stanly_gain": [0.2, 0.012, 0.15],
+        "anti_windup_val": 100.0,
+        "stanly_heading_gain": 1.0,
+
+        "stanley_preview_dt": 0.12,
+        "stanley_preview_gain": [0.3, 0.25, 0.25],
+        "stanley_preview_h_e_gain": 1.0,
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [3.5, 11.0],
+        "PP_gain": [0.5, 1.4],
+        "___": "------------------------reverse_pure_persuit------------",
+        "reverse_PP_LD": [5.0, 7.0],
+        "R_PP_gain": [0.2, 2.0],
+        "____": "------------------------combine--------------------",
+        "combine_PP_ratio": 0.3
+      }
+    },
+
+    "15": {
+      "_": "평행주차",
+      "______lllllllllllllll______": {
+        "PD_gas_gain": [0.4, 0.20],
+        "PD_brake_gain": [0.10, 0.07],
+        "PD_brake_gain_backup": [0.04, 0.5],
+
+        "enable_brake_error": 0.2
+      },
+      "______---------------______": {
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [3.0, 7.0],
+        "PP_gain": [0.47, 2.0],
+        "___": "------------------------reverse_pure_persuit------------",
+        "reverse_PP_LD": [5.0, 7.0],
+        "R_PP_gain": [0.2, 2.0],
+        "____": "------------------------combine--------------------",
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "23": {
+      "_": "터널(동적_소형)",
+      "______lllllllllllllll______": {
+        "PD_gas_gain": [0.4, 0.30],
+        "PD_brake_gain": [0.04, 0.05],
+        "PD_brake_gain_backup": [0.04, 0.5],
+
+        "enable_brake_error": 0.2
+      },
+      "______---------------______": {
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [4.0, 11.0],
+        "PP_gain": [0.45, 1.5],
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "2222": {
+      "_": "유턴",
+      "______lllllllllllllll______": {},
+
+      "______---------------______": {
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [3.0, 9.0],
+        "PP_gain": [0.52, 1.6],
+        "combine_PP_ratio": 1.0
+      }
+    }
+  }
+}

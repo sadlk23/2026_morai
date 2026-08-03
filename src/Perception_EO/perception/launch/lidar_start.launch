@@ -1,0 +1,44 @@
+<launch>
+  <arg name="use_lidar_lane" default="true"/>
+  <!-- ========== VLP-16 드라이버 (포트 2368, 시뮬레이션 단일 라이다) ========== -->
+  <group ns="lidar">
+    <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
+      <arg name="port" value="2368"/>
+    </include>
+  </group>
+
+  <!-- ========== LiDAR 처리 노드 ========== -->
+  <node pkg="lidar" type="lidar_standard" name="lidar_standard" output="screen"/>
+  <node pkg="lidar" type="lidar_mission" name="lidar_mission" output="screen">
+    <param name="mission100/roi_rear" value="60.0"/>
+    <param name="mission100/roi_front" value="60.0"/>
+    <param name="mission100/roi_left_min" value="1.0"/>
+    <param name="mission100/roi_left_max" value="4.0"/>
+    <param name="mission100/roi_z_min" value="-1.1"/>
+    <param name="mission100/roi_z_max" value="1.0"/>
+    <param name="mission100/voxel_size" value="0.1"/>
+    <param name="mission100/cluster_tolerance" value="0.55"/>
+    <param name="mission100/min_cluster_size" value="3"/>
+    <param name="mission100/tracking/match_distance" value="4.0"/>
+    <param name="mission100/tracking/timeout_sec" value="0.5"/>
+    <param name="mission100/tracking/max_missed_scans" value="2"/>
+    <param name="mission100/tracking/velocity_filter_alpha" value="0.4"/>
+    <param name="mission100/tracking/min_velocity_dt_sec" value="0.03"/>
+    <param name="mission100/tracking/max_abs_relative_velocity_mps" value="45.0"/>
+
+    <param name="mission100/front_vehicle/roi_rear" value="0.0"/>
+    <param name="mission100/front_vehicle/roi_front" value="40.0"/>
+    <param name="mission100/front_vehicle/roi_y_min" value="-0.5"/>
+    <param name="mission100/front_vehicle/roi_y_max" value="0.5"/>
+    <param name="mission100/front_vehicle/roi_z_min" value="-1.1"/>
+    <param name="mission100/front_vehicle/roi_z_max" value="1.0"/>
+    <param name="mission100/front_vehicle/voxel_size" value="0.1"/>
+    <param name="mission100/front_vehicle/cluster_tolerance" value="0.5"/>
+    <param name="mission100/front_vehicle/min_cluster_size" value="5"/>
+    <param name="mission100/front_vehicle/max_cluster_size" value="2000"/>
+    <param name="mission100/front_vehicle/min_width_y" value="0.35"/>
+    <param name="mission100/front_vehicle/min_height_z" value="0.30"/>
+    <param name="mission100/front_vehicle/no_detection_distance" value="40.0"/>
+  </node>
+  <node if="$(arg use_lidar_lane)" pkg="lidar_lane" type="lidar_lane" name="lidar_lane" output="screen"/>
+</launch>

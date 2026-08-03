@@ -1,0 +1,12 @@
+# ROS/catkin build outputs
+build/
+devel/
+install/
+logs/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+
+# Local catkin tools state
+.catkin_tools/

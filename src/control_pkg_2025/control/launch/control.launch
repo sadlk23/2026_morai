@@ -1,0 +1,7 @@
+<launch>
+  <arg name="control_profile" default="B_Simul"/>
+
+  <node pkg="control" type="car_control" name="erp_control" output="screen">
+    <param name="control_profile" value="$(arg control_profile)"/>
+  </node>
+</launch>

@@ -1,0 +1,84 @@
+# planning_node의 private namespace(~mission_2026)에 로드하는 예시값이다.
+#
+# launch 파일의 <node ...> 내부에서 다음과 같이 사용한다.
+# <rosparam command="load"
+#           file="$(find planning_pkg_2025)/src/mission_2026/mission_2026_ros1_params.yaml"/>
+#
+# 실제 차량 투입 전에는 반드시 차량 치수, 터널 폭/길이, 도로 경계를
+# 실측값으로 교체하고 rosbag 또는 시뮬레이터에서 먼저 검증해야 한다.
+
+mission_2026:
+  # 기존 mission_list의 번호와 연결한다.
+  tunnel_mission_ids: [23]
+  static_traffic_mission_ids: [14, 31]
+  traffic_mission_ids: [31]
+
+  # 센서 데이터가 이 시간보다 오래되면 해당 측정치를 사용하지 않는다.
+  pose_timeout_s: 0.35
+  wall_topic_timeout_s: 0.30
+  stop_line_timeout_s: 2.0
+
+  tunnel:
+    calibration_duration_s: 1.0
+    known_length_m: 100.0
+    normal_speed_mps: 4.0
+    predicted_speed_mps: 3.0
+    dead_reckoning_speed_mps: 1.5
+    wall_hold_duration_s: 0.30
+    dead_reckoning_limit_s: 1.00
+    gps_timeout_s: 0.35
+    path_lookahead_m: 12.0
+    path_step_m: 0.5
+    maximum_lateral_correction_m: 1.5
+    exit_search_margin_m: 15.0
+    near_start_m: 2.0
+    near_end_m: 8.0
+    far_start_m: 8.0
+    far_end_m: 25.0
+    maximum_wall_rmse_m: 0.20
+    minimum_wall_x_span_m: 1.0
+    default_left_wall_distance_m: 3.0
+    default_right_wall_distance_m: 3.0
+    gps_recovery_maximum_innovation_m: 8.0
+    gps_recovery_required_samples: 5
+    wall_filter_alpha: 0.35
+
+  static:
+    obstacle_topic: /LiDAR/object_cen
+    vehicle_width_m: 1.90
+    vehicle_length_m: 4.65
+    lateral_control_error_m: 0.20
+    perception_lateral_error_m: 0.15
+    lateral_safety_margin_m: 0.20
+    longitudinal_safety_margin_m: 0.80
+    boundary_margin_m: 0.15
+    detection_range_m: 25.0
+    obstacle_timeout_s: 0.35
+    signal_timeout_s: 0.35
+    unknown_signal_stop_distance_m: 15.0
+    approach_speed_mps: 5.0
+    avoidance_speed_mps: 4.0
+    return_speed_mps: 4.5
+    maximum_curvature_per_m: 0.16
+    maximum_lateral_acceleration_mps2: 2.0
+    comfortable_deceleration_mps2: 2.5
+    emergency_stop_distance_m: 5.0
+    required_obstacle_confirmations: 3
+    required_green_confirmations: 3
+    stop_line_buffer_m: 1.0
+    path_step_m: 0.25
+    lateral_candidate_step_m: 0.25
+    minimum_entry_length_m: 8.0
+    early_merge_distances_m: [0.0, 2.0, 4.0]
+    return_lengths_m: [8.0, 12.0]
+
+    # 현재 /Vision/obstacle_pos가 장애물 중심점만 제공하므로 사용하는
+    # 기본 크기다. 인지 메시지에 실제 크기가 추가되면 adapter에서 교체한다.
+    default_obstacle_width_m: 1.0
+    default_obstacle_length_m: 1.0
+
+    # 차선/연석 경계 토픽이 아직 연결되지 않았을 때 false로 둔다.
+    # true이면 아래 Frenet d 경계를 절대 넘지 않는 후보만 선택한다.
+    road_bounds_valid: false
+    road_left_bound_m: 3.0
+    road_right_bound_m: -3.0

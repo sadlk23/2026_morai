@@ -1,0 +1,23 @@
+{
+  "params": {
+    "user_ip": "127.0.0.1",
+    "host_ip": "127.0.0.1",
+
+    "user_serial_port": "/dev/ttyUSB0",
+    "traffic_greenlight_setting": "False",
+
+    "gps_host_port": 1233,
+    "gps_dst_port": 1234,
+
+    "imu_host_port": 1235,
+    "imu_dst_port": 1236,
+
+    "collision_data_host_port": 9091,
+    "collision_data_dst_port": 9092,
+
+    "make_path_folder_name": "path",
+    "make_path_file_name": "test_path.txt",
+
+    "planner_path_file_name": "kcity.txt"
+  }
+}

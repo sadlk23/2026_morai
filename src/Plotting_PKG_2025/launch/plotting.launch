@@ -1,0 +1,5 @@
+<launch>
+  <!-- ROS1 launch for plotting_pkg -->
+  <node pkg="plotting_pkg" type="plotting_node.py" name="plotting_node" output="screen"/>
+</launch>
+

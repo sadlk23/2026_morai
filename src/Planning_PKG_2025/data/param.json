@@ -1,0 +1,189 @@
+{
+    "basic_data":  {
+                       "lidar":  {
+                                     "small_static_eps":  2,
+                                     "small_static_min":  5,
+                                     "small_static_max":  15,
+                                     "big_static_eps":  1,
+                                     "big_static_min":  1,
+                                     "big_static_max":  2,
+                                     "parking_point_eps":  1,
+                                     "parking_point_min":  1,
+                                     "parking_point_max":  10,
+                                     "delivery_flag_a_eps":  1,
+                                     "delivery_flag_a_min":  10,
+                                     "delivery_flag_a_max":  15,
+                                     "delivery_flag_b_eps":  1,
+                                     "delivery_flag_b_min":  5,
+                                     "delivery_flag_b_max":  30,
+                                     "u_turn_point_eps":  1,
+                                     "u_turn_point_min":  2,
+                                     "u_turn_point_max":  10,
+                                     "angled_parking_eps":  0.3,
+                                     "angled_parking_min":  5,
+                                     "angled_parking_max":  15,
+                                     "left_lane_clear_timeout_sec":  0.2,
+                                     "mission100_left_tracks_timeout_sec":  0.3,
+                                     "mission100_current_front_tracks_timeout_sec":  0.3,
+                                     "car_front_car_distance_timeout_sec":  0.2
+                                 },
+                       "control":  {
+                                       "min_distance":  0.1,
+                                       "min_velocity":  0.1,
+                                       "brake_coefficient":  1,
+                                       "brake_distance":  0.5,
+                                       "safe_distance":  18
+                                   },
+                       "planning":  {
+                                        "default_velocity":  3.6,
+                                        "velocity_60":  16.6666666667
+                                    }
+                   },
+    "missions":  {
+                     "dynamic_obstacle":  {
+                                              "target_velocity":  4.0
+                                          },
+                     "stop_traffic":  {
+                                          "stop_line_list":  [
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     302646.0817806562,
+                                                                     4123987.2062103031
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     302624.1122801115,
+                                                                     4124128.2978237644
+                                                                 ],
+                                                                 [
+                                                                     302550.8635382382,
+                                                                     4124127.8761430951
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     302504.7299994251,
+                                                                     4124243.6808771621
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ],
+                                                                 [
+                                                                     0,
+                                                                     0
+                                                                 ]
+                                                             ],
+                                          "tf_check_distance_":  18,
+                                          "stop_point_distance":  4.5,
+                                          "normal_velocity":  6.9,
+                                          "slow_velocity":  3,
+                                          "end_velocity":  6.9,
+                                          "left_done_velocity":  5,
+                                          "emergency_velocity":  3,
+                                          "emergency_distance":  15,
+                                          "done_distance":  11
+                                      },
+                     "highway_lane_change":  {
+                                                 "target_lane_idx":  1,
+                                                 "merge_velocity_mps":  27.7777777778,
+                                                 "main_velocity_mps":  33.3333333333,
+                                                 "high_pass_velocity_mps":  16.6666666667,
+                                                 "merge_stop_lane_change_velocity_mps":  2.7777777778,
+                                                 "lane_change_start_point":  [
+                                                                                 302657.03588990,
+                                                                                 4124390.32315252
+                                                                             ],
+                                                 "high_pass_slow_point":  [
+                                                                              302665.48616821,
+                                                                              4123875.16871254
+                                                                          ],
+                                                 "merge_lane_stop_distance":  50.0,
+                                                 "lane_change_duration_sec":  2.0,
+                                                 "quintic_interval":  0.05,
+                                                 "lane_change_complete_distance":  0.5,
+                                                 "trigger_reached_distance":  0.5,
+                                                 "stop_velocity_threshold_mps":  0.2,
+                                                 "path_tail_point_count":  340,
+                                                 "left_prediction_horizon_sec":  3.0,
+                                                 "compact_left_prediction_horizon_sec":  4.0,
+                                                 "left_min_confirmed_hits":  2,
+                                                 "left_max_missed_scans":  0,
+                                                 "left_hard_front_gap_m":  1.25,
+                                                 "left_hard_rear_gap_m":  1.75,
+                                                 "left_front_time_headway_sec":  0.1,
+                                                 "left_rear_time_headway_sec":  0.15,
+                                                 "left_min_front_ttc_sec":  1.0,
+                                                 "left_min_rear_ttc_sec":  1.25,
+                                                 "left_closing_speed_epsilon_mps":  0.2,
+                                                 "left_safe_hold_sec":  0.3,
+                                                 "current_front_ttc_trigger_sec":  8.0,
+                                                 "left_front_min_ttc_advantage_sec":  2.0,
+                                                 "front_ttc_compare_range_m":  40.0,
+                                                 "front_ttc_display_cap_sec":  15.0,
+                                                 "ttc_benefit_hold_sec":  0.5,
+                                                 "side_by_side_front_extent_m":  3.0,
+                                                 "side_by_side_rear_extent_m":  3.0,
+                                                 "parallel_relative_speed_max_mps":  0.8,
+                                                 "slot_speed_bias_mps":  2.0,
+                                                 "slot_ready_margin_m":  1.0,
+                                                 "slot_intent_hold_sec":  0.3,
+                                                 "slot_mode_min_hold_sec":  1.0,
+                                                 "slot_timeout_sec":  4.0,
+                                                 "slot_accel_limit_mps2":  1.0,
+                                                 "slot_decel_limit_mps2":  1.0
+                                             }
+                 }
+}

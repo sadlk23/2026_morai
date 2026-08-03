@@ -1,0 +1,252 @@
+{
+  "safety_factor": {
+    "curvature_gain": 3.4
+  },
+
+  "normal": {
+    "______lllllllllllllll______": {
+      "gear": 0,
+
+      "PD_gas_gain": [0.07, 0.10],
+      "PD_brake_gain": [0.15, 0.03],
+      "PD_brake_gain_backup": [0.040, 0.5],
+
+      "enable_brake_error": 0.2
+    },
+
+    "______---------------______": {
+      "_": "------------------------------stanly-------------",
+      "stanly_gain": [0.1, 0.003, 0.05],
+      "anti_windup_val": 80.0,
+      "stanly_heading_gain": 1.3,
+
+      "stanley_preview_dt": 0.13,
+      "stanley_preview_gain": [0.25, 0.25, 0.25],
+      "stanley_preview_h_e_gain": 0.7,
+      "__": "--------------------------pure_persuit---------------",
+      "PP_LD": [5.0, 11.0],
+      "PP_gain": [0.47, 2.0],
+      "___": "------------------------reverse_pure_persuit------------",
+      "reverse_PP_LD": [5.0, 7.0],
+      "R_PP_gain": [0.2, 2.0],
+      "____": "------------------------combine--------------------",
+      "combine_PP_ratio": 0.2
+    }
+  },
+
+  "missions": {
+    "999": {
+      "_": "협로_1",
+      "______lllllllllllllll______": {
+        "target_speed": 2.2
+      },
+      "______---------------______": {
+        "PP_LD": [3.0, 5.0],
+        "PP_gain": [0.5, 1.6],
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "998": {
+      "_": "협로_2",
+      "______lllllllllllllll______": {
+        "target_speed": 6.0,
+
+        "PD_gas_gain": [0.07, 0.1],
+        "PD_brake_gain": [0.12, 0.03],
+
+        "enable_brake_error": 0.01
+      },
+      "______---------------______": {
+        "stanly_gain": [0.6, 0.003, 0.005],
+        "anti_windup_val": 100.0,
+
+        "stanley_preview_dt": 0.11,
+        "stanley_preview_gain": [0.25, 0.35, 0.2],
+        "stanley_preview_h_e_gain": 0.9,
+
+        "combine_PP_ratio": 0.0
+      }
+    },
+
+    "7": {
+      "_": "배달_A",
+      "______lllllllllllllll______": {
+        "target_speed": 2.0
+      }
+    },
+
+    "9": {
+      "_": "배달_B",
+      "______lllllllllllllll______": {
+        "target_speed": 2.0
+      }
+    },
+
+    "14": {
+      "_": "소형",
+      "______lllllllllllllll______": {
+        "target_speed": 3.0
+      }
+    },
+
+    "12": {
+      "_": "대형",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    },
+
+    "15": {
+      "_": "평행주차",
+      "______lllllllllllllll______": {
+        "target_speed": 2.0
+      }
+    },
+
+     "21": {
+      "_": "사선주차",
+      "______lllllllllllllll______": {},
+      "______---------------______": {
+        "reverse_PP_LD": [4.0, 7.0],
+        "R_PP_gain": [0.1, 1.0]
+      }
+    },
+
+    "23": {
+      "_": "LiDAR LANE",
+      "______lllllllllllllll______": {},
+      "______---------------______": {
+        "PP_LD": [5.0, 11.0],
+        "PP_gain": [0.35, 1.0],
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "2323": {
+      "_": "AI CAMERA LANE",
+      "______lllllllllllllll______": {},
+      "______---------------______": {
+        "PP_LD": [3.0, 5.0],
+        "PP_gain": [0.35, 1.6],
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "22": {
+      "_": "유턴",
+      "______lllllllllllllll______": {
+        "target_speed": 3.0
+      },
+
+      "______---------------______": {
+        "__": "--------------------------pure_persuit---------------",
+        "PP_LD": [3.0, 11.0],
+        "PP_gain": [0.52, 1.6],
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "17": {
+      "_": "터널 동적",
+      "______lllllllllllllll______": {
+        "target_speed": 3.0
+      },
+      "______---------------______": {
+        "combine_PP_ratio": 1.0
+      }
+    },
+
+    "31": {
+      "_": "신호등",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    },
+
+    "2222": {
+      "_": "정지선 좌회전",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    },
+
+    "232323": {
+      "_": "비신호 정지선",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    },
+
+    "24": {
+      "_": "감속구간",
+      "______lllllllllllllll______": {
+        "target_speed": 2.0
+      }
+    },
+
+    "25": {
+      "_": "방지턱",
+      "______lllllllllllllll______": {}
+    },
+
+    "26": {
+      "_": "중속",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    },
+
+    "27": {
+      "_": "중고속(우회전 후 가속)",
+      "______lllllllllllllll______": {}
+    },
+
+    "28": {
+      "_": "대형 전 가속",
+      "______lllllllllllllll______": {}
+    },
+
+    "29": {
+      "_": "대형후 신호등 직진",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    },
+
+    "30": {
+      "_": "배달 후 좌회전 후 좌회전 후 고속",
+      "______lllllllllllllll______": {}
+    },
+    "3131": {
+      "_": "교차로 좌회전",
+      "______lllllllllllllll______": {
+        "target_speed": 5.0
+      }
+    },
+    "41": {
+      "_": "산학앞 배달A 전 4m/s",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    },
+    "42": {
+      "_": "산학앞 소형 전 4m/s",
+      "______lllllllllllllll______": {
+        "target_speed": 3.0
+      }
+    },
+    "43": {
+      "_": "산학앞 대형 전 6.5m/s",
+      "______lllllllllllllll______": {
+        "target_speed": 5.5
+      }
+    },
+    "44": {
+      "_": "산학앞 배달B 전 4m/s",
+      "______lllllllllllllll______": {
+        "target_speed": 4.0
+      }
+    }
+  }
+}

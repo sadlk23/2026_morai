@@ -1,0 +1,46 @@
+<launch>
+  <arg name="map_name" default="highway_test"/>
+  <arg name="mission_list" default="[60, 100]"/>
+  <arg name="control_profile" default="B_Simul"/>
+
+  <arg name="use_localization" default="true"/>
+  <arg name="use_lidar" default="true"/>
+  <arg name="use_lidar_lane" default="true"/>
+  <arg name="use_planning" default="true"/>
+  <arg name="use_control" default="true"/>
+  <arg name="use_udp_bridge" default="true"/>
+  <arg name="use_plotting" default="false"/>
+
+  <group if="$(arg use_localization)">
+    <node pkg="morai" type="morai_gps.py" name="gps_publisher" output="screen"/>
+    <node pkg="morai" type="morai_imu.py" name="imu_publisher" output="screen"/>
+    <node pkg="morai" type="gps_to_utm.py" name="utm" output="screen"/>
+  </group>
+
+  <group if="$(arg use_lidar)">
+    <include file="$(find perception)/launch/lidar_start.launch">
+      <arg name="use_lidar_lane" value="$(arg use_lidar_lane)"/>
+    </include>
+  </group>
+
+  <group if="$(arg use_planning)">
+    <include file="$(find planning_pkg_2025)/launch/planning_pkg_2025.launch">
+      <arg name="map_name" value="$(arg map_name)"/>
+      <arg name="mission_list" value="$(arg mission_list)"/>
+    </include>
+  </group>
+
+  <group if="$(arg use_control)">
+    <include file="$(find control)/launch/control.launch">
+      <arg name="control_profile" value="$(arg control_profile)"/>
+    </include>
+  </group>
+
+  <group if="$(arg use_udp_bridge)">
+    <node pkg="serial" type="morai_udp_main.py" name="morai_main_bridge" output="screen"/>
+  </group>
+
+  <group if="$(arg use_plotting)">
+    <include file="$(find plotting_pkg)/launch/plotting.launch"/>
+  </group>
+</launch>

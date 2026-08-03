@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>morai_bringup</name>
+  <version>0.1.0</version>
+  <description>ROS1 launch integration for the MORAI autonomous driving stack.</description>
+  <maintainer email="maintainer@example.com">MORAI Team</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>roslaunch</exec_depend>
+  <exec_depend>morai</exec_depend>
+  <exec_depend>serial</exec_depend>
+  <exec_depend>perception</exec_depend>
+  <exec_depend>planning_pkg_2025</exec_depend>
+  <exec_depend>control</exec_depend>
+  <exec_depend>plotting_pkg</exec_depend>
+
+  <export/>
+</package>

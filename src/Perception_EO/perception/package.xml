@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>perception</name>
+  <version>0.0.1</version>
+  <description>Launch files and configuration for Velodyne LiDAR setup</description>
+
+  <maintainer email="root@todo.todo">root</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roslaunch</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>velodyne_pointcloud</exec_depend>
+  <exec_depend>lidar</exec_depend>
+  <exec_depend>lidar_lane</exec_depend>
+
+  <export>
+  </export>
+</package>

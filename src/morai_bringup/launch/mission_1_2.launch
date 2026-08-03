@@ -1,0 +1,12 @@
+<launch>
+  <!-- 정적 장애물/GPS 음영 터널/동적 장애물/정적+신호 순서의 통합 실행 프리셋 -->
+  <arg name="control_profile" default="B_Simul"/>
+  <arg name="use_plotting" default="true"/>
+
+  <include file="$(find morai_bringup)/launch/morai_system.launch">
+    <arg name="map_name" value="map_morai_test1"/>
+    <arg name="mission_list" value="[14, 23, 24, 31]"/>
+    <arg name="control_profile" value="$(arg control_profile)"/>
+    <arg name="use_plotting" value="$(arg use_plotting)"/>
+  </include>
+</launch>
